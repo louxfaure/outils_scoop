@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load bootstrap4 %}
+{% block title %}Ma page d'accueil{% endblock %}
+{% block content %}
+<div class="container-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+        <h1 class="display-4">Gestion des lecteur</h1>
+        <p class="lead">Permet de voir dans quelles institutions se trouve le compte du lecteur et s'il a des transactions dans celle-ci.</p>
+</div>
+{% if redirect %}
+<div class="alert alert-danger" role="alert">
+        Identifiant inconnu du système
+</div>
+{% endif %}
+<div class="py-3">
+<form action="{% url "recherche-lecteur" %}" method="post" class="form">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    {% buttons %}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    {% endbuttons %}
+</form>
+</div>
+{% endblock %}
