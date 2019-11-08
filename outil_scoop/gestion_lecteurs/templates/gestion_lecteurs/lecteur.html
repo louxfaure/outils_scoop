@@ -6,7 +6,12 @@
         <p class="lead">Permet de voir dans quelles institutions se trouve le compte du lecteur et s'il a des transactions dans celle-ci.</p>
 </div>
 <div class="py-3">
-    {% if user.ckeck_if_unknowed_user %}
+    {% if user.error %}
+    <div class="alert alert-danger" role="alert">
+        L'API {{ user.error_API }} a planté sur linstitution {{ user.error_institution }}. La raison : " {{ user.error_message }} ".
+        <p>Contactez votre admindstrateur. Càd moi :)</p>
+    </div>
+    {% elif user.ckeck_if_unknowed_user %}
     <div class="alert alert-danger" role="alert">
             Identifiant inconnu du système
     </div>
@@ -36,7 +41,7 @@
         </tbody>
     </table>
     <div class="py-3">
-        <a href="#" class="btn btn-primary btn-lg {% if user.is_not_deletable == 'true' %} disabled {% endif %}" 
+        <a href="{% url 'suppr-lecteur' identifiant user.get_user_institutions_string %}" class="btn btn-primary btn-lg {% if user.is_not_deletable == 'true' %} disabled {% endif %}" 
             role="button" aria-disabled="{{ user.is_not_deletable }}">Supprimer le compte</a>
         <a href="{% url 'modif-lecteur' identifiant user.get_user_institutions_string %}" class="btn btn-secondary btn-lg" role="button">Modifier l'identifiant principale</a>
     </div>

@@ -13,6 +13,7 @@ class User(object):
     """
     def __init__(self,user_id):
         self.error = False
+        self.error_API = ""
         self.error_institution = ""
         self.error_message =""
         self.user_data = OrderedDict()
@@ -27,22 +28,20 @@ class User(object):
             if status == "Success":
                 total_record_count = response['total_record_count']
                 if total_record_count == 1 :
-                    # user_institutions_list.append(institution)
-                    status,user = api.get_user(user_id,accept='json')
-                    self.user_data[institution]=user
-                    # self.user_data[institution]={}
-                    # self.user_data[institution]["user_group"] = user["user_group"]["value"]
-                    # self.user_data[institution]["account_type"] = user["account_type"]["value"]
-                    # self.user_data[institution]["loans"] = user["loans"]["value"]
-                    # self.user_data[institution]["requests"] = user["requests"]["value"]
-                    # self.user_data[institution]["record_type"] = user["record_type"]
-                    # self.user_data[institution]["full_name"] = user["full_name"]
-                    # self.user_data[institution]["job_category"] = user["job_category"]
-                    # self.user_data[institution]["expiry_date"] = user["expiry_date"]
-                    self.nb_prets += user["loans"]["value"]
-                    self.nb_demandes += user["requests"]["value"]
+                    status,user = api.get_user(user_id,user_view='brief',accept='json')
+                    if status == "Success":
+                        self.user_data[institution]=user
+                        self.nb_prets += user["loans"]["value"]
+                        self.nb_demandes += user["requests"]["value"]
+                    else:
+                        self.error = True
+                        self.error_API = "Get User"
+                        self.error_institution = institution
+                        self.error_message = response
+                        break
             else:
                 self.error = True
+                self.error_API = "Retrieve User"
                 self.error_institution = institution
                 self.error_message = response
                 break
@@ -79,6 +78,8 @@ class User(object):
                 else:
                     user_data_in_table[data].append(self.user_data[inst][data])
         return user_data_in_table
+
+
             
 
 
