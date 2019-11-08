@@ -5,6 +5,7 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from .forms import LecteurForm
+from .forms import ChangeLecteurForm
 from . import services
 import os
 import json
@@ -36,7 +37,14 @@ def suppr_lecteur(request,identifiant,list_etab):
 
 def modif_lecteur(request,identifiant,list_etab):
     user_data = request.session.get(identifiant)
-    for institution  in user_data:
-        user_data[institution]['primary_id'] = "valeur de test"
-        json.dumps(user_data[institution]) 
+    form =  ChangeLecteurForm(request.POST or None)
+    if form.is_valid():
+        new_id_lecteur = form.data['nouvel_identifiant']
+        expiry_date = form.cleaned_data['date_expiration']
+        for institution  in user_data:
+            if new_id_lecteur:
+                user_data[institution]['primary_id'] = new_id_lecteur
+                json.dumps(user_data[institution])
+        
+            error = True
     return render(request, "gestion_lecteurs/modif-lecteur.html", locals())
