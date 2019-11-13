@@ -3,21 +3,24 @@
 {% block title %}Ma page d'accueil{% endblock %}
 {% block content %}
 <div class="container-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-        <h1 class="display-4">Gestion des lecteur</h1>
-        <p class="lead">Permet de voir dans quelles institutions se trouve le compte du lecteur et s'il a des transactions dans celle-ci.</p>
+        <h1 class="display-4">Rechercher un lecteur</h1>
+        <p class="lead">
+            Rechercher un lecteur par son <span class="font-weight-bold">identifiant principal</span> afin de voir dans quelles institutions le compte est présent.
+            Selaon la situtaion du lecteur le système vous proposera de supprimer ou modifier son compte. 
+        </p>
 </div>
-{% if redirect %}
-<div class="alert alert-danger" role="alert">
-        Identifiant inconnu du système
-</div>
-{% endif %}
+
 <div class="py-3">
 <form action="{% url "recherche-lecteur" %}" method="post" class="form">
     {% csrf_token %}
-    {% bootstrap_form form %}
-    {% buttons %}
-        <button type="submit" class="btn btn-primary">Submit</button>
-    {% endbuttons %}
+    {% for field in form %}
+    <div class="input-group mb-3 input-group-lg">
+        {{ field }}
+        <div class="input-group-append">
+            <button class="btn btn-primary" type="submit" id="button-addon2">Rechercher</button>
+        </div>
+    </div>
+    {% endfor %}
 </form>
 </div>
 {% endblock %}

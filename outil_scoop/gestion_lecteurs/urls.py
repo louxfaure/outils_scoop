@@ -20,6 +20,7 @@ from . import views
 urlpatterns = [
     path('recherche-lecteur',views.recherche_lecteur, name='recherche-lecteur'),
     path('lecteur/<str:identifiant>', views.lecteur, name='lecteur'),
-    path('modification-lecteur/<str:identifiant>/<str:list_etab>', views.modif_lecteur ,name='modif-lecteur'),
-    path('suppression-lecteur/<str:identifiant>/<str:list_etab>', views.suppr_lecteur ,name='suppr-lecteur')
+    path('modification-lecteur/<str:identifiant>', views.modif_lecteur ,name='modif-lecteur'),
+    path('suppression-lecteur/<str:identifiant>/<str:list_etab>', views.suppr_lecteur ,name='suppr-lecteur'),
+    path('result-modification-lecteur/<str:identifiant>', views.result_modif_lecteur ,name='result-modif-lecteur'),
 ]

@@ -3,7 +3,6 @@
 {% block content %}
 <div class="container-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
         <h1 class="display-4">{{ identifiant }}</h1>
-        <p class="lead">Permet de voir dans quelles institutions se trouve le compte du lecteur et s'il a des transactions dans celle-ci.</p>
 </div>
 <div class="py-3">
     {% if user.error %}
@@ -13,7 +12,7 @@
     </div>
     {% elif user.ckeck_if_unknowed_user %}
     <div class="alert alert-danger" role="alert">
-            Identifiant inconnu du système
+            Identifiant inconnu du système.  <a href="{% url "recherche-lecteur" %}" class="alert-link">Relancer votre recherche</a>
     </div>
     {% else %}
     <table class="table table-striped">
@@ -41,9 +40,11 @@
         </tbody>
     </table>
     <div class="py-3">
-        <a href="{% url 'suppr-lecteur' identifiant user.get_user_institutions_string %}" class="btn btn-primary btn-lg {% if user.is_not_deletable == 'true' %} disabled {% endif %}" 
+        <a href="{% url 'suppr-lecteur' identifiant user.get_user_institutions_string %}" 
+            class="btn btn-primary btn-lg {% if user.is_not_deletable == 'true' %} disabled {% endif %}" 
             role="button" aria-disabled="{{ user.is_not_deletable }}">Supprimer le compte</a>
-        <a href="{% url 'modif-lecteur' identifiant user.get_user_institutions_string %}" class="btn btn-secondary btn-lg" role="button">Modifier l'identifiant principale</a>
+        <a href="{% url 'modif-lecteur' identifiant %}"
+            class="btn btn-secondary btn-lg" role="button">Modifier le compte</a>
     </div>
     {% endif %}
 </div>
