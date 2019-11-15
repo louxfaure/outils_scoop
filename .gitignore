@@ -1,6 +1,6 @@
 *.pyc
 db.sqlite3
 env-virtuel/
-outil_scoop/outil_scoop/wsgi.py
+outil_scoop/static
 outil_scoop/outil_scoop/settings.py
 outil_scoop/outil_scoop/wsgi.py
