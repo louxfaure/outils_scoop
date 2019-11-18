@@ -2,8 +2,8 @@ import os
 from collections import OrderedDict
 from Alma_Apis_Interface import Alma_Apis_Users
 
-# INSTITUTIONS_LIST = ['NETWORK','UB','UBM','IEP','INP','BXSA']
-INSTITUTIONS_LIST = ['NETWORK','UB','BXSA']
+INSTITUTIONS_LIST = ['NETWORK','UB','UBM','IEP','INP','BXSA']
+# INSTITUTIONS_LIST = ['NETWORK','UB','BXSA']
 
 class User(object):
     """Retourne la liste des institutions où le compte du lecteur est présent. Pour chaque institution retourne le nombre de prêt
@@ -20,8 +20,8 @@ class User(object):
         self.nb_prets = 0
         self.nb_demandes = 0
         for institution in INSTITUTIONS_LIST :
-            # api_key = os.getenv("PROD_{}_USER_API".format(institution))
-            api_key = os.getenv("TEST_{}_API".format(institution))
+            api_key = os.getenv("PROD_{}_USER_API".format(institution))
+            # api_key = os.getenv("TEST_{}_API".format(institution))
             api = Alma_Apis_Users.AlmaUsers(apikey=api_key, region='EU', service='test')
             status, response = api.retrieve_user_by_id(user_id, accept='json')
             # print("{} --> {} : {}".format(institution,status,response))

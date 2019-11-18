@@ -30,7 +30,7 @@ def suppr_lecteur(request,identifiant,list_etab):
     results = {}
     for etab in list_etab.split(','):
         results[etab] = {}
-        api_key = os.getenv("TEST_{}_API".format(etab))
+        api_key = os.getenv("PROD_{}_USER_API".format(etab))
         api = Alma_Apis_Users.AlmaUsers(apikey=api_key, region='EU', service='test')
         results[etab]['status'],results[etab]['response'] = api.delete_user(identifiant)
     return render(request, "gestion_lecteurs/suppr-lecteur.html", locals())
@@ -56,7 +56,7 @@ def result_modif_lecteur(request,identifiant):
     results = {}
     user_data = request.session.get(identifiant)
     for institution  in user_data:
-        api_key = os.getenv("TEST_{}_API".format(institution))
+        api_key = os.getenv("PROD_{}_USER_API".format(institution))
         api = Alma_Apis_Users.AlmaUsers(apikey=api_key, region='EU', service='test')
         results[institution] = {}
         results[institution]["status"], results[institution]["response"] = api.update_user(identifiant,
