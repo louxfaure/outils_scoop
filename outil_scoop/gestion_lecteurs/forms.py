@@ -7,10 +7,18 @@ class LecteurForm(forms.Form):
         widget=forms.TextInput(attrs={
             "placeholder" : "Identifiant du lecteur",
             "aria-label" : "Identifiant du lecteur",
-            "class": "form-control",
+            "class": "form-control col-md-7",
             "name": "champ_recherche"}),
         required=True
         )
+    type_identifiant = forms.ChoiceField(
+        choices=     [('PRIMARYIDENTIFIER','Identifiant principal'),
+                            ('BARCODE', 'Code-barres')],
+        widget=forms.Select(attrs={            
+            "aria-label" : "Identifiant du lecteur",
+            "class": "custom-select form-control-lg col-md-3"}),
+        required=True
+        ) 
 class ChangeLecteurForm(forms.Form):
     nouvel_identifiant = forms.CharField(
         widget=forms.TextInput(attrs={

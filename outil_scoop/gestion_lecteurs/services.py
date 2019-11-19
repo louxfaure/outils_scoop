@@ -11,7 +11,7 @@ class User(object):
     Arguments:
         user_id {str} -- identifiant du lecteur
     """
-    def __init__(self,user_id):
+    def __init__(self,user_id, user_id_type):
         self.error = False
         self.error_API = ""
         self.error_institution = ""
@@ -23,13 +23,13 @@ class User(object):
             api_key = os.getenv("PROD_{}_USER_API".format(institution))
             # api_key = os.getenv("TEST_{}_API".format(institution))
             api = Alma_Apis_Users.AlmaUsers(apikey=api_key, region='EU', service='test')
-            status, user = api.get_user(user_id,user_view='brief',accept='json')
+            status, user = api.get_user(user_id,user_id_type=user_id_type,user_view='brief',accept='json')
             # print("{} --> {} : {}".format(institution,status,response))
             if status == "Success":
                 self.user_data[institution]=user
                 self.nb_prets += user["loans"]["value"]
                 self.nb_demandes += user["requests"]["value"]
-            else:
+            elif status == "Error":
                 self.error = True
                 self.error_API = "Get User"
                 self.error_institution = institution
@@ -59,14 +59,29 @@ class User(object):
         return ",".join(self.user_data.keys())
 
     def get_user_data_in_table(self,datas):
+        """Formatte un dictionaire pour afficher les données lecteurs en tableau
+        
+        Arguments:
+            datas {array} -- donées lecteurs que l('on veut voir afficher)
+        
+        Returns:
+            [dict] -- dict[data][inst] = valeur de data
+        """
         user_data_in_table=OrderedDict()
         for data in datas:
             user_data_in_table[data] = []
             for inst in self.user_data:
-                if isinstance(self.user_data[inst][data], dict):
-                    user_data_in_table[data].append(self.user_data[inst][data]["value"])
+                barcode = "Null"
+                if data == 'barcode':
+                    for identifier in self.user_data[inst]['user_identifier']:
+                        if identifier['id_type']['value'] == 'BARCODE':
+                            barcode = identifier['value']
+                    user_data_in_table[data].append(barcode)
                 else:
-                    user_data_in_table[data].append(self.user_data[inst][data])
+                    if isinstance(self.user_data[inst][data], dict):
+                        user_data_in_table[data].append(self.user_data[inst][data]["value"])
+                    else:
+                        user_data_in_table[data].append(self.user_data[inst][data])
         return user_data_in_table
 
 

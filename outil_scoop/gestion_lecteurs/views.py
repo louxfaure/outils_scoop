@@ -15,13 +15,14 @@ from Alma_Apis_Interface import Alma_Apis_Users
 def recherche_lecteur(request):
     form = LecteurForm(request.POST or None)
     if form.is_valid():
+        type_id = form.cleaned_data['type_identifiant']
         id_lecteur = form.cleaned_data['identifiant']
-        return HttpResponseRedirect(reverse('lecteur', kwargs={'identifiant': id_lecteur}))
+        return HttpResponseRedirect(reverse('lecteur', kwargs={'identifiant': id_lecteur.strip(),'type_identifiant':type_id}))
     return render(request, "gestion_lecteurs/recherche_lecteur.html", locals())
 
-def lecteur(request,identifiant):
-    user = services.User(identifiant)
-    datas = ("full_name","job_category","user_group","record_type","account_type","expiry_date","loans","requests")
+def lecteur(request,identifiant,type_identifiant):
+    user = services.User(identifiant,type_identifiant)
+    datas = ("full_name","primary_id","barcode","job_category","user_group","record_type","account_type","expiry_date","loans","requests")
     user_data_in_table = user.get_user_data_in_table(datas)
     request.session[identifiant] = user.user_data
     return render(request, "gestion_lecteurs/lecteur.html", locals())
