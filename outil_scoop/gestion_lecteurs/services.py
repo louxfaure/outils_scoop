@@ -23,27 +23,17 @@ class User(object):
             api_key = os.getenv("PROD_{}_USER_API".format(institution))
             # api_key = os.getenv("TEST_{}_API".format(institution))
             api = Alma_Apis_Users.AlmaUsers(apikey=api_key, region='EU', service='test')
-            status, response = api.retrieve_user_by_id(user_id, accept='json')
+            status, user = api.get_user(user_id,user_view='brief',accept='json')
             # print("{} --> {} : {}".format(institution,status,response))
             if status == "Success":
-                total_record_count = response['total_record_count']
-                if total_record_count == 1 :
-                    status,user = api.get_user(user_id,user_view='brief',accept='json')
-                    if status == "Success":
-                        self.user_data[institution]=user
-                        self.nb_prets += user["loans"]["value"]
-                        self.nb_demandes += user["requests"]["value"]
-                    else:
-                        self.error = True
-                        self.error_API = "Get User"
-                        self.error_institution = institution
-                        self.error_message = response
-                        break
+                self.user_data[institution]=user
+                self.nb_prets += user["loans"]["value"]
+                self.nb_demandes += user["requests"]["value"]
             else:
                 self.error = True
-                self.error_API = "Retrieve User"
+                self.error_API = "Get User"
                 self.error_institution = institution
-                self.error_message = response
+                self.error_message = user
                 break
 
     @property
