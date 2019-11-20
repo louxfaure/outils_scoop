@@ -78,10 +78,13 @@ class User(object):
                             barcode = identifier['value']
                     user_data_in_table[data].append(barcode)
                 else:
-                    if isinstance(self.user_data[inst][data], dict):
-                        user_data_in_table[data].append(self.user_data[inst][data]["value"])
-                    else:
-                        user_data_in_table[data].append(self.user_data[inst][data])
+                    if data in self.user_data[inst]:
+                        if isinstance(self.user_data[inst][data], dict):
+                            user_data_in_table[data].append(self.user_data[inst][data]["value"])
+                        else: 
+                            user_data_in_table[data].append(self.user_data[inst][data])
+                    else :
+                        user_data_in_table[data].append("Null")
         return user_data_in_table
 
 
