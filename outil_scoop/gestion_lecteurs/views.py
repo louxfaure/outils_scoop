@@ -27,6 +27,15 @@ def lecteur(request,identifiant,type_identifiant):
     request.session[identifiant] = user.user_data
     return render(request, "gestion_lecteurs/lecteur.html", locals())
 
+def lecteur_analytique(request):
+    identifiant = request.GET.get('id')
+    type_identifiant = request.GET.get('typeid')
+    user = services.User(identifiant,type_identifiant)
+    datas = ("full_name","primary_id","barcode","job_category","user_group","record_type","account_type","expiry_date","loans","requests")
+    user_data_in_table = user.get_user_data_in_table(datas)
+    request.session[identifiant] = user.user_data
+    return render(request, "gestion_lecteurs/lecteur.html", locals())
+
 def suppr_lecteur(request,identifiant,list_etab):
     results = {}
     for etab in list_etab.split(','):
