@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from .forms import LecteurForm
 from .forms import ChangeLecteurForm
+from .forms import CategorieUsager
 from . import services
 import os
 import json
@@ -25,6 +26,7 @@ def lecteur(request,identifiant,type_identifiant):
     datas = ("full_name","primary_id","barcode","job_category","user_group","record_type","account_type","expiry_date","loans","requests")
     user_data_in_table = user.get_user_data_in_table(datas)
     request.session[identifiant] = user.user_data
+    form = CategorieUsager(request.POST or None)
     return render(request, "gestion_lecteurs/lecteur.html", locals())
 
 def lecteur_analytique(request):
@@ -41,7 +43,8 @@ def suppr_lecteur(request,identifiant,list_etab):
     for etab in list_etab.split(','):
         results[etab] = {}
         api_key = os.getenv("PROD_{}_USER_API".format(etab))
-        api = Alma_Apis_Users.AlmaUsers(apikey=api_key, region='EU', service='test')
+        # api_key = os.getenv("TEST_{}_API".format(etab))
+        api = Alma_Apis_Users.AlmaUsers(apikey=api_key, region='EU', service='Outils_scoop_lecteurs')
         results[etab]['status'],results[etab]['response'] = api.delete_user(identifiant)
     return render(request, "gestion_lecteurs/suppr-lecteur.html", locals())
 
@@ -62,12 +65,36 @@ def modif_lecteur(request,identifiant):
         return HttpResponseRedirect(reverse('result-modif-lecteur',kwargs={'identifiant': identifiant}))
     return render(request, "gestion_lecteurs/modif-lecteur.html", locals())
 
+def distribution_compte_interne(request,identifiant,type_identifiant):
+    user_data = request.session.get(identifiant)
+    if request.method == 'POST':
+        form = CategorieUsager(request.POST)
+        if form.is_valid():
+            cat_usager = form.cleaned_data['categorie_usagers']
+            institution = form.cleaned_data['etab']
+            user_data[institution]['job_category']['value'] = cat_usager
+            # api_key = os.getenv("PROD_{}_USER_API".format(institution))
+            api_key = os.getenv("TEST_{}_API".format(institution))
+            api = Alma_Apis_Users.AlmaUsers(apikey=api_key, region='EU', service='Outils_scoop_lecteurs')
+            status, response = api.update_user(identifiant,
+                                                "user_group,job_category,pin_number,preferred_language,campus_code,rs_libraries,user_title,library_notices",
+                                                json.dumps(user_data[institution]),
+                                                accept='json',
+                                                content_type='json')
+            alert_type = "alert-success" if status == "Success" else "alert-danger"
+            return render(request, "gestion_lecteurs/distribution-compte-interne.html", locals())
+        else:
+            return HttpResponseRedirect(reverse('lecteur', kwargs={'identifiant': identifiant,'type_identifiant':type_identifiant}))
+    else:
+            return HttpResponseRedirect(reverse('lecteur', kwargs={'identifiant': identifiant,'type_identifiant':type_identifiant}))
+
 def result_modif_lecteur(request,identifiant):
     results = {}
     user_data = request.session.get(identifiant)
     for institution  in user_data:
         api_key = os.getenv("PROD_{}_USER_API".format(institution))
-        api = Alma_Apis_Users.AlmaUsers(apikey=api_key, region='EU', service='test')
+        # api_key = os.getenv("TEST_{}_API".format(institution))
+        api = Alma_Apis_Users.AlmaUsers(apikey=api_key, region='EU', service='Outils_scoop_lecteurs')
         results[institution] = {}
         results[institution]["status"], results[institution]["response"] = api.update_user(identifiant,
                                                                                         "user_group,job_category,pin_number,preferred_language,campus_code,rs_libraries,user_title,library_notices",

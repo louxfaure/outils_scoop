@@ -31,3 +31,20 @@ class ChangeLecteurForm(forms.Form):
         attrs={"name":"date_expiration"}),
         required=False
         )
+    
+class CategorieUsager(forms.Form):
+    CHOICES = (('PEB_attente','Bibliothèque PEB'),
+            ('Exterieur_attente','Lecteur extérieur'),
+            )
+    categorie_usagers = forms.ChoiceField(
+        choices= CHOICES,
+        widget=forms.Select(attrs={            
+            "aria-label" : "Catégorie usagers",
+            "class": "custom-select form-control-lg col-md-3"}),
+        required=True
+        ) 
+    etab = forms.CharField(
+        widget=forms.HiddenInput(attrs={
+            "class": "form-control",
+            "name": "nouvel_identifiant"}),
+        )
