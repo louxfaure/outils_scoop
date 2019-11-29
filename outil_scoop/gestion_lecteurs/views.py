@@ -73,8 +73,8 @@ def distribution_compte_interne(request,identifiant,type_identifiant):
             cat_usager = form.cleaned_data['categorie_usagers']
             institution = form.cleaned_data['etab']
             user_data[institution]['job_category']['value'] = cat_usager
-            # api_key = os.getenv("PROD_{}_USER_API".format(institution))
-            api_key = os.getenv("TEST_{}_API".format(institution))
+            api_key = os.getenv("PROD_{}_USER_API".format(institution))
+            # api_key = os.getenv("TEST_{}_API".format(institution))
             api = Alma_Apis_Users.AlmaUsers(apikey=api_key, region='EU', service='Outils_scoop_lecteurs')
             status, response = api.update_user(identifiant,
                                                 "user_group,job_category,pin_number,preferred_language,campus_code,rs_libraries,user_title,library_notices",
